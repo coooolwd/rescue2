@@ -110,6 +110,42 @@ export default function App() {
   const [trackingError, setTrackingError] = useState('');
   const [wakeLockActive, setWakeLockActive] = useState(false);
   const [wakeLockObj, setWakeLockObj] = useState<any>(null);
+  const [isBlackScreen, setIsBlackScreen] = useState(false);
+
+  const longPressTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleBlackScreenTouchStart = () => {
+    longPressTimerRef.current = setTimeout(() => {
+      setIsBlackScreen(false);
+    }, 1500);
+  };
+
+  const handleBlackScreenTouchEnd = () => {
+    if (longPressTimerRef.current) {
+      clearTimeout(longPressTimerRef.current);
+      longPressTimerRef.current = null;
+    }
+  };
+
+  const enterBlackScreen = async () => {
+    if (!wakeLockActive) {
+      try {
+        if ('wakeLock' in navigator) {
+          const lock = await (navigator as any).wakeLock.request('screen');
+          setWakeLockObj(lock);
+          setWakeLockActive(true);
+          lock.addEventListener('release', () => {
+            setWakeLockActive(false);
+            setWakeLockObj(null);
+          });
+        }
+      } catch (err) {
+        console.error('Failed to acquire wake lock:', err);
+      }
+    }
+    setIsBlackScreen(true);
+  };
+
 
   // Map refs
   const mapRef = useRef<HTMLDivElement>(null);
@@ -649,6 +685,9 @@ export default function App() {
       if (wakeLockObj) {
         wakeLockObj.release();
       }
+      if (longPressTimerRef.current) {
+        clearTimeout(longPressTimerRef.current);
+      }
     };
   }, [wakeLockObj]);
 
@@ -797,6 +836,24 @@ export default function App() {
 
   // === RENDER GATE 3: CHILD SENDER PAGE ===
   if (role === 'child') {
+    if (isBlackScreen) {
+      return (
+        <div 
+          className="fixed inset-0 bg-black z-[9999] flex flex-col items-center justify-center select-none cursor-none"
+          onTouchStart={handleBlackScreenTouchStart}
+          onTouchEnd={handleBlackScreenTouchEnd}
+          onMouseDown={handleBlackScreenTouchStart}
+          onMouseUp={handleBlackScreenTouchEnd}
+        >
+          <div className="text-center opacity-[0.03] hover:opacity-10 transition-opacity duration-500 px-6 pointer-events-none">
+            <Shield className="w-12 h-12 mx-auto mb-4 text-emerald-500" />
+            <p className="text-sm font-semibold text-white">화면 잠금 및 절전 모드 작동 중</p>
+            <p className="text-xs text-dark-400 mt-1">화면을 2초간 길게 누르면 잠금이 해제됩니다.</p>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="min-h-screen bg-dark-950 flex flex-col justify-between p-4 overflow-y-auto">
         {/* Child Header */}
@@ -895,6 +952,25 @@ export default function App() {
                     wakeLockActive ? 'translate-x-6' : 'translate-x-1'
                   }`}
                 />
+              </button>
+            </div>
+
+            {/* Black Screen Power Saving Mode */}
+            <div className="flex items-center justify-between bg-dark-900/60 rounded-xl p-3.5 border border-dark-800/40 mt-3">
+              <div className="flex flex-col">
+                <span className="text-sm font-semibold text-white">블랙스크린 절전 모드</span>
+                <span className="text-[10px] text-dark-500">화면을 어둡게 잠궈 백그라운드 전송 유지</span>
+              </div>
+              <button
+                onClick={enterBlackScreen}
+                disabled={!isTracking}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
+                  isTracking
+                    ? 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-900/30'
+                    : 'bg-dark-800 text-dark-600 cursor-not-allowed'
+                }`}
+              >
+                모드 시작
               </button>
             </div>
           </div>
