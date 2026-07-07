@@ -1,0 +1,195 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #030712; /* bg-dark-950 */
+  font-family: 'Inter', 'Outfit', system-ui, -apple-system, sans-serif;
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.3);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(139, 92, 246, 0.3);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 92, 246, 0.6);
+}
+
+/* Leaflet Dark Map Filter */
+.dark-map .leaflet-tile,
+.dark-map .leaflet-tile-pane,
+.dark-map .leaflet-tile-container {
+  filter: invert(100%) hue-rotate(180deg) brightness(80%) contrast(90%) !important;
+}
+
+.dark-map .leaflet-container {
+  background: #0b0f19 !important;
+}
+
+/* Custom Leaflet Dark Controls styling */
+.dark-map .leaflet-bar {
+  border: 1px solid rgba(139, 92, 246, 0.2) !important;
+  background-color: rgba(15, 23, 42, 0.8) !important;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.5) !important;
+}
+
+.dark-map .leaflet-bar a {
+  background-color: transparent !important;
+  color: #a78bfa !important;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.1) !important;
+  transition: all 0.2s ease;
+}
+
+.dark-map .leaflet-bar a:hover {
+  background-color: rgba(139, 92, 246, 0.2) !important;
+  color: #ffffff !important;
+}
+
+.dark-map .leaflet-control-attribution {
+  background: rgba(3, 7, 18, 0.7) !important;
+  color: #475569 !important;
+  backdrop-filter: blur(4px);
+}
+
+.dark-map .leaflet-control-attribution a {
+  color: #64748b !important;
+}
+
+/* Custom pulsing map marker styles */
+.pulsing-marker {
+  position: relative;
+}
+
+.pulsing-marker-core {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background-color: #8b5cf6;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 10px rgba(139, 92, 246, 0.8);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+}
+
+.pulsing-marker-ring {
+  border: 3px solid #8b5cf6;
+  border-radius: 50%;
+  height: 40px;
+  width: 40px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: pulse-ring 2s cubic-bezier(0.215, 0.610, 0.355, 1) infinite;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.pulsing-marker-core-danger {
+  background-color: #ef4444;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.8);
+}
+.pulsing-marker-ring-danger {
+  border-color: #ef4444;
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: translate(-50%, -50%) scale(0.3);
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.2);
+    opacity: 0;
+  }
+}
+
+/* Glassmorphism utility classes */
+.glass-panel {
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.glass-panel-heavy {
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(139, 92, 246, 0.15);
+}
+
+.glass-input {
+  background: rgba(3, 7, 18, 0.6);
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  color: #f8fafc;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-input:focus {
+  outline: none;
+  border-color: #8b5cf6;
+  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
+  background: rgba(3, 7, 18, 0.8);
+}
+
+/* Neon animations and effects */
+.neon-glow-primary {
+  box-shadow: 0 0 20px 0 rgba(139, 92, 246, 0.35);
+}
+
+.neon-glow-danger {
+  box-shadow: 0 0 25px 0 rgba(239, 68, 68, 0.45);
+}
+
+.animate-glow-pulse {
+  animation: glow-pulse 2s infinite;
+}
+
+@keyframes glow-pulse {
+  0%, 100% {
+    box-shadow: 0 0 15px 0 rgba(139, 92, 246, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 25px 5px rgba(139, 92, 246, 0.6);
+  }
+}
+
+.animate-glow-pulse-danger {
+  animation: glow-pulse-danger 1.5s infinite;
+}
+
+@keyframes glow-pulse-danger {
+  0%, 100% {
+    box-shadow: 0 0 15px 0 rgba(239, 68, 68, 0.4);
+    border-color: rgba(239, 68, 68, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 25px 8px rgba(239, 68, 68, 0.7);
+    border-color: rgba(239, 68, 68, 0.8);
+  }
+}

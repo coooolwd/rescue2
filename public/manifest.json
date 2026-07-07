@@ -1,0 +1,18 @@
+{
+  "name": "AxialSafe 자녀위치추적기",
+  "short_name": "AxialSafe",
+  "description": "실시간 자녀 위치 관제 및 안심구역 이탈 방지 경보 시스템",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#030712",
+  "theme_color": "#8b5cf6",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
