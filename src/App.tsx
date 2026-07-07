@@ -676,9 +676,26 @@ export default function App() {
     }
   };
 
-  // Clean up child resources on unmount
+  // Clean up child resources and manage aggressive Wake Lock re-acquisition
   useEffect(() => {
+    const handleVisibilityChange = async () => {
+      if ((isBlackScreen || wakeLockActive) && document.visibilityState === 'visible') {
+        try {
+          if ('wakeLock' in navigator) {
+            const lock = await (navigator as any).wakeLock.request('screen');
+            setWakeLockObj(lock);
+            setWakeLockActive(true);
+          }
+        } catch (err) {
+          console.error('Aggressive Wake Lock re-acquisition failed:', err);
+        }
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
     return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
       if (watchIdRef.current !== null) {
         navigator.geolocation.clearWatch(watchIdRef.current);
       }
@@ -689,7 +706,7 @@ export default function App() {
         clearTimeout(longPressTimerRef.current);
       }
     };
-  }, [wakeLockObj]);
+  }, [isBlackScreen, wakeLockActive, wakeLockObj]);
 
 
   // === RENDER GATE 1: AUTHENTICATION ===
