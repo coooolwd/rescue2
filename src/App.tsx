@@ -676,7 +676,7 @@ export default function App() {
     }
   };
 
-  // Clean up child resources and manage aggressive Wake Lock re-acquisition
+  // Manage aggressive Wake Lock re-acquisition
   useEffect(() => {
     const handleVisibilityChange = async () => {
       if ((isBlackScreen || wakeLockActive) && document.visibilityState === 'visible') {
@@ -696,9 +696,6 @@ export default function App() {
 
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
-      if (watchIdRef.current !== null) {
-        navigator.geolocation.clearWatch(watchIdRef.current);
-      }
       if (wakeLockObj) {
         wakeLockObj.release();
       }
@@ -707,6 +704,15 @@ export default function App() {
       }
     };
   }, [isBlackScreen, wakeLockActive, wakeLockObj]);
+
+  // Clean up GPS tracking watcher on unmount
+  useEffect(() => {
+    return () => {
+      if (watchIdRef.current !== null) {
+        navigator.geolocation.clearWatch(watchIdRef.current);
+      }
+    };
+  }, []);
 
 
   // === RENDER GATE 1: AUTHENTICATION ===
